@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+        integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="style.css">
+    <title>Todo List App</title>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h2 class="title">Todo List App</h2>
+        <div class="inputfields">
+            <input type="text" id="taskvalue">
+            <button type="submit" class="btn" id="btnadd"><i class="fa fa-plus"></i></button>
+        </div>
+        <div class="content">
+            <ul id="tasks">
+            </ul>
+            
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="action.js"></script>
+    <script>
+        $(document).ready(function () {
+            function loadtask() {
+                $.ajax({
+                    url: "show-tasks.php",
+                    type: "POST",
+                    success: function (data) {
+                        $("#tasks").html(data);
+                    }
+                })
+            }
+            loadtask();
+            $("#btnadd").on("click", function (e) {
+                e.preventDefault();
+                var taskvalue = $("#taskvalue").val();
+                if (taskvalue != "") {
+                    $.ajax({
+                        url: "add-task.php",
+                        type: "POST",
+                        data: { task: taskvalue },
+                        success: function (data) {
+                            if (data == 1) {
+                                loadtask();
+                                $("#taskvalue").val("");
+                            }
+                        }
+                    });
+                }
+
+            })
+            $(document).on("click", "#delete-task", function (e) {
+                e.preventDefault();
+                var id = $("#delete").data("id");
+                $.ajax({
+                    url: "delete-task.php",
+                    type: "POST",
+                    data: { id: id },
+                    success: function (data) {
+                        if (data = 1) {
+                            loadtask();
+                        }
+                    }
+                });
+            })         
+        });
+    </script>
+</body>
+
+</html>
